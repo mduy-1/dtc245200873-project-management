@@ -2,7 +2,7 @@
 
 Express + PostgreSQL + pgAdmin + Nginx. Giao diện tiếng Việt hỗ trợ tạo dự án, thành viên, task, phân công và cập nhật trạng thái Kanban. Dữ liệu lưu trong PostgreSQL, không lưu trong trình duyệt.
 
-**Trạng thái:** đã chuẩn bị mã nguồn và kiểm tra cú pháp/cấu hình. Docker Engine trên máy hiện trả HTTP 500 nên chưa xác minh chạy tích hợp. Xem [kết quả kiểm chứng](docs/VERIFICATION.md). Báo cáo và thông tin sinh viên để làm sau theo yêu cầu.
+**Trạng thái:** đã chạy Docker Compose và kiểm tra tích hợp ngày 20/10/2026. Smoke test đạt, Prometheus có 5 target UP, pgAdmin HTTP 200, có metrics từng container và kết quả 3 truy vấn Loki. Xem [kết quả kiểm chứng](docs/VERIFICATION.md). Báo cáo và thông tin sinh viên để làm sau theo yêu cầu.
 
 ## Khởi chạy trên Windows
 
