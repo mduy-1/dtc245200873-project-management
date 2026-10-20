@@ -1,6 +1,6 @@
 # Đề 14 — Hệ thống Quản lý Dự án
 
-Express + PostgreSQL + pgAdmin + Nginx. Giao diện tiếng Việt hỗ trợ tạo dự án, thành viên, task, phân công và cập nhật trạng thái Kanban. Dữ liệu lưu trong PostgreSQL, không lưu trong trình duyệt.
+Express + PostgreSQL + pgAdmin + Nginx. Giao diện tiếng Việt dạng bảng danh sách, có menu Công việc / Dự án / Thành viên, tìm kiếm và lọc dự án. Hỗ trợ tạo dự án, thành viên, task, phân công và cập nhật trạng thái trực tiếp trong bảng; các form thêm mới mở bằng hộp thoại. Dữ liệu lưu trong PostgreSQL, không lưu trong trình duyệt.
 
 **Trạng thái:** đã chạy Docker Compose và kiểm tra tích hợp ngày 20/10/2026. Smoke test đạt, Prometheus có 5 target UP, pgAdmin HTTP 200, có metrics từng container và kết quả 3 truy vấn Loki. Xem [kết quả kiểm chứng](docs/VERIFICATION.md). Báo cáo và thông tin sinh viên để làm sau theo yêu cầu.
 
