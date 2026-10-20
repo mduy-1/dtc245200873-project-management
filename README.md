@@ -2,6 +2,8 @@
 
 Express + PostgreSQL + pgAdmin + Nginx. Giao diện tiếng Việt hỗ trợ tạo dự án, thành viên, task, phân công và cập nhật trạng thái Kanban. Dữ liệu lưu trong PostgreSQL, không lưu trong trình duyệt.
 
+**Trạng thái:** đã chuẩn bị mã nguồn và kiểm tra cú pháp/cấu hình. Docker Engine trên máy hiện trả HTTP 500 nên chưa xác minh chạy tích hợp. Xem [kết quả kiểm chứng](docs/VERIFICATION.md). Báo cáo và thông tin sinh viên để làm sau theo yêu cầu.
+
 ## Khởi chạy trên Windows
 
 Yêu cầu Docker Desktop chạy Linux containers, Docker Compose v2, PowerShell và khoảng 6 GB RAM trống. Mở terminal tại thư mục repository:
@@ -44,6 +46,8 @@ flowchart LR
 Nginx là cổng vào website. Network `data` cô lập DB, `web` nối proxy và app, `monitoring` dành cho quan sát. Chỉ các giao diện demo được bind vào loopback host. DB, exporter, Loki không mở port host.
 
 Grafana tự nạp datasource Prometheus và dashboard `Project Management — Containers Web Database`. Prometheus có 5 job: chính nó, app, Nginx exporter, PostgreSQL exporter và cAdvisor. Chờ 30–60 giây, tạo vài request rồi chờ ít nhất 2 phút để rate có đủ mẫu. cAdvisor cần đọc thông tin Docker host; đây là ngoại lệ quyền của bộ giám sát, không áp dụng cho app. Mount `/var/run` bao gồm Docker socket: dù mount read-only, Docker API vẫn có quyền cao. Không cho người dùng không tin cậy truy cập cAdvisor. Trên Docker Desktop metrics là của Linux VM, không phải toàn bộ Windows. Một số máy dùng cgroup/storage khác có thể cần điều chỉnh cAdvisor; kiểm tra có series `container_*{image!=""}` thay vì chỉ nhìn target UP.
+
+Loki được provision sẵn trong Grafana Explore. Promtail đọc log app/Nginx từ volume chia sẻ, không dùng Docker socket. Có 4 truy vấn LogQL và hướng dẫn tạo dữ liệu tại [docs/DEMO.md](docs/DEMO.md). Promtail đã hết hỗ trợ 02/03/2026; giữ trong lab theo đề, chuyển sang Alloy trước khi dùng thực tế. Nguồn chính thức: https://grafana.com/docs/loki/latest/send-data/promtail/.
 
 ## Bảo mật và giới hạn
 

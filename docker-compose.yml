@@ -124,6 +124,24 @@ services:
       - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
     networks: [monitoring, admin]
     depends_on: [prometheus]
+  loki:
+    <<: *safe
+    image: grafana/loki:3.4.2
+    command: ['-config.file=/etc/loki/config.yml']
+    volumes: ['./logging/loki.yml:/etc/loki/config.yml:ro', 'loki-data:/loki']
+    networks: [monitoring]
+  promtail:
+    <<: *safe
+    image: grafana/promtail:3.4.2
+    user: '10001:10001'
+    read_only: true
+    tmpfs: ['/tmp:uid=10001,gid=10001']
+    command: ['-config.file=/etc/promtail/config.yml']
+    volumes: ['./logging/promtail.yml:/etc/promtail/config.yml:ro', 'logs:/logs:ro']
+    networks: [monitoring]
+    depends_on:
+      loki: {condition: service_started}
+      log-init: {condition: service_completed_successfully}
 networks:
   web:
   data: {internal: true}
@@ -135,3 +153,4 @@ volumes:
   logs:
   prometheus-data:
   grafana-data:
+  loki-data:

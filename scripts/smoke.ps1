@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 $base = 'http://localhost:8080'
 $health = Invoke-RestMethod "$base/health"
 if ($health.database -ne 'connected') { throw 'DB chưa sẵn sàng' }
