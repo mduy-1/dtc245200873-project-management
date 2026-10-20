@@ -90,12 +90,12 @@ Giữ bản backup ngoài repo và kiểm tra khôi phục trên DB thử nghi�
 
 ## GitHub
 
-Tạo tài khoản và repository theo mã số sinh viên của chính bạn trên GitHub. Chưa có mã SV và thông tin tài khoản nên chưa tạo remote/push. Ba giai đoạn commit: (1) app + DB + pgAdmin + Nginx; (2) Prometheus + Grafana + exporters; (3) Loki + Promtail + LogQL. Xem `git log --oneline`.
+Mã số sinh viên: `dtc245200873`. Repository công khai: [dtc245200873-project-management](https://github.com/mduy-1/dtc245200873-project-management), sử dụng tài khoản hiện có `mduy-1`. Tên tài khoản hiện chưa theo MSSV; cần đối chiếu yêu cầu giảng viên trước khi nộp. Ba giai đoạn commit: (1) app + DB + pgAdmin + Nginx; (2) Prometheus + Grafana + exporters; (3) Loki + Promtail + LogQL. Các commit sau ghi nhận sửa lỗi runtime và cập nhật tài liệu. Xem `git log --oneline`.
 
 ```powershell
-git remote add origin https://github.com/<MSSV>/<MSSV>-project-management.git
-git branch -M main
-git push -u origin main
+git clone https://github.com/mduy-1/dtc245200873-project-management.git
+cd dtc245200873-project-management
+powershell -ExecutionPolicy Bypass -File scripts/start.ps1
 ```
 
 Không commit `.env`, dump DB hoặc screenshot lộ thông tin. Báo cáo sinh viên thực hiện sau theo yêu cầu hiện tại.

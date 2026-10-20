@@ -16,4 +16,5 @@ Tệp này phân biệt cấu hình đã chuẩn bị và kết quả đã chạ
 - pgAdmin `/login`: HTTP 200. Chưa thao tác đăng nhập và kết nối DB qua giao diện pgAdmin.
 - `scripts/verify-runtime.js`: 11 series RAM container có image; cả ba truy vấn Loki cho app, nginx và count_over_time có dữ liệu.
 - Build npm báo 4 dependency vulnerabilities (2 moderate, 2 high); cần audit và nâng dependency trước khi triển khai ngoài môi trường lab. API vẫn chưa có xác thực, chỉ bind localhost theo thiết kế.
-- Chưa có GitHub remote, screenshot demo và báo cáo sinh viên.
+- Đã push lên repository công khai https://github.com/mduy-1/dtc245200873-project-management, branch main. Tên repository theo MSSV dtc245200873; tài khoản hiện có là mduy-1.
+- Chưa có screenshot demo và báo cáo sinh viên.
