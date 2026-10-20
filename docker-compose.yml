@@ -1,0 +1,85 @@
+name: project-management
+x-safe: &safe
+  restart: unless-stopped
+  security_opt: [no-new-privileges:true]
+  cap_drop: [ALL]
+  logging:
+    driver: json-file
+    options: {max-size: 10m, max-file: '3'}
+services:
+  log-init:
+    image: alpine:3.21
+    user: '0:0'
+    cap_drop: [ALL]
+    cap_add: [CHOWN, FOWNER, DAC_OVERRIDE]
+    network_mode: none
+    command: ['sh','-c','mkdir -p /logs/app /logs/nginx; chown 1000:1000 /logs/app; chown 101:101 /logs/nginx; chmod 755 /logs/app /logs/nginx']
+    volumes: [logs:/logs]
+  db:
+    <<: *safe
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: projects
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run scripts/init.ps1}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:?Run scripts/init.ps1}
+      MONITOR_DB_PASSWORD: ${MONITOR_DB_PASSWORD:?Run scripts/init.ps1}
+    cap_add: [CHOWN, DAC_OVERRIDE, FOWNER, SETGID, SETUID]
+    volumes: [postgres-data:/var/lib/postgresql/data, './db/init.sh:/docker-entrypoint-initdb.d/10-init.sh:ro']
+    networks: [data]
+    healthcheck:
+      test: ['CMD-SHELL','pg_isready -U postgres -d projects']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  app:
+    <<: *safe
+    build: ./app
+    read_only: true
+    tmpfs: [/tmp]
+    environment:
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:?Run scripts/init.ps1}
+    volumes: ['logs:/logs']
+    command: ['node','server.js']
+    working_dir: /app
+    networks: [web, data, monitoring]
+    depends_on:
+      db: {condition: service_healthy}
+      log-init: {condition: service_completed_successfully}
+    healthcheck:
+      test: ['CMD','node','-e',"fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+  nginx:
+    <<: *safe
+    image: nginxinc/nginx-unprivileged:1.28-alpine
+    read_only: true
+    tmpfs: [/tmp]
+    entrypoint: [nginx, '-g', 'daemon off;']
+    ports: ['127.0.0.1:8080:8080']
+    volumes: ['./nginx/nginx.conf:/etc/nginx/nginx.conf:ro', 'logs:/logs']
+    networks: [web, monitoring]
+    depends_on:
+      app: {condition: service_healthy}
+  pgadmin:
+    <<: *safe
+    image: dpage/pgadmin4:9.2
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:?Run scripts/init.ps1}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:?Run scripts/init.ps1}
+      PGADMIN_LISTEN_PORT: '8080'
+    ports: ['127.0.0.1:5050:8080']
+    volumes: [pgadmin-data:/var/lib/pgadmin]
+    networks: [data, admin]
+    depends_on:
+      db: {condition: service_healthy}
+networks:
+  web:
+  data: {internal: true}
+  monitoring: {internal: true}
+  admin:
+volumes:
+  postgres-data:
+  pgadmin-data:
+  logs:
