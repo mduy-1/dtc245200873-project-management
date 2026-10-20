@@ -18,6 +18,8 @@ Script tạo `.env` bằng bộ sinh số ngẫu nhiên mật mã. Xem mật kh�
 |---|---|---|
 | Website qua Nginx | http://localhost:8080 | Bản lab không có đăng nhập |
 | pgAdmin | http://localhost:5050 | PGADMIN_EMAIL / PGADMIN_PASSWORD trong .env |
+| Grafana | http://localhost:3000 | admin / GRAFANA_PASSWORD trong .env |
+| Prometheus | http://localhost:9090 | Chỉ localhost |
 
 Trong pgAdmin chọn Register > Server: Name `Project DB`; Host `db`; Port `5432`; Maintenance database `projects`; Username `project_app`; Password `APP_DB_PASSWORD`. Không dùng localhost vì pgAdmin chạy trong container riêng. Dùng tài khoản `postgres` chỉ khi cần quản trị.
 
@@ -40,6 +42,8 @@ flowchart LR
 ```
 
 Nginx là cổng vào website. Network `data` cô lập DB, `web` nối proxy và app, `monitoring` dành cho quan sát. Chỉ các giao diện demo được bind vào loopback host. DB, exporter, Loki không mở port host.
+
+Grafana tự nạp datasource Prometheus và dashboard `Project Management — Containers Web Database`. Prometheus có 5 job: chính nó, app, Nginx exporter, PostgreSQL exporter và cAdvisor. Chờ 30–60 giây, tạo vài request rồi chờ ít nhất 2 phút để rate có đủ mẫu. cAdvisor cần đọc thông tin Docker host; đây là ngoại lệ quyền của bộ giám sát, không áp dụng cho app. Mount `/var/run` bao gồm Docker socket: dù mount read-only, Docker API vẫn có quyền cao. Không cho người dùng không tin cậy truy cập cAdvisor. Trên Docker Desktop metrics là của Linux VM, không phải toàn bộ Windows. Một số máy dùng cgroup/storage khác có thể cần điều chỉnh cAdvisor; kiểm tra có series `container_*{image!=""}` thay vì chỉ nhìn target UP.
 
 ## Bảo mật và giới hạn
 

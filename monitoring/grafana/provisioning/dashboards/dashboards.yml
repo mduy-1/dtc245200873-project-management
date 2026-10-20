@@ -1,0 +1,9 @@
+apiVersion: 1
+providers:
+  - name: Project Lab
+    orgId: 1
+    folder: Project Management
+    type: file
+    disableDeletion: true
+    options:
+      path: /var/lib/grafana/dashboards

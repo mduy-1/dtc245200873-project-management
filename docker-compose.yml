@@ -74,6 +74,56 @@ services:
     networks: [data, admin]
     depends_on:
       db: {condition: service_healthy}
+  prometheus:
+    <<: *safe
+    image: prom/prometheus:v3.2.1
+    command: ['--config.file=/etc/prometheus/prometheus.yml','--storage.tsdb.retention.time=7d']
+    volumes: ['./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro', 'prometheus-data:/prometheus']
+    ports: ['127.0.0.1:9090:9090']
+    networks: [monitoring, admin]
+  nginx-exporter:
+    <<: *safe
+    image: nginx/nginx-prometheus-exporter:1.5.1
+    command: ['--nginx.scrape-uri=http://nginx:8081/stub_status']
+    networks: [monitoring]
+    depends_on: [nginx]
+  postgres-exporter:
+    <<: *safe
+    image: prometheuscommunity/postgres-exporter:v0.17.1
+    environment:
+      DATA_SOURCE_NAME: 'postgresql://project_monitor:${MONITOR_DB_PASSWORD:?Run scripts/init.ps1}@db:5432/projects?sslmode=disable'
+    networks: [data, monitoring]
+    depends_on:
+      db: {condition: service_healthy}
+  cadvisor:
+    restart: unless-stopped
+    image: gcr.io/cadvisor/cadvisor:v0.49.2
+    command: ['--docker_only=true','--housekeeping_interval=15s']
+    security_opt: [no-new-privileges:true]
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+    networks: [monitoring]
+    logging:
+      driver: json-file
+      options: {max-size: 10m, max-file: '3'}
+  grafana:
+    <<: *safe
+    image: grafana/grafana:11.6.0
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:?Run scripts/init.ps1}
+      GF_USERS_ALLOW_SIGN_UP: 'false'
+      GF_AUTH_ANONYMOUS_ENABLED: 'false'
+    ports: ['127.0.0.1:3000:3000']
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks: [monitoring, admin]
+    depends_on: [prometheus]
 networks:
   web:
   data: {internal: true}
@@ -83,3 +133,5 @@ volumes:
   postgres-data:
   pgadmin-data:
   logs:
+  prometheus-data:
+  grafana-data:

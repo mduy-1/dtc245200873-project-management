@@ -1,0 +1,14 @@
+{
+  "uid":"project-lab","title":"Project Management — Containers Web Database","schemaVersion":40,"version":1,"refresh":"15s","time":{"from":"now-15m","to":"now"},
+  "panels":[
+    {"id":1,"title":"Scrape targets (1 = UP)","type":"stat","gridPos":{"x":0,"y":0,"w":8,"h":5},"datasource":{"type":"prometheus","uid":"prometheus"},"targets":[{"expr":"up","legendFormat":"{{job}}","refId":"A"}]},
+    {"id":2,"title":"Nginx availability","type":"stat","gridPos":{"x":8,"y":0,"w":8,"h":5},"datasource":{"type":"prometheus","uid":"prometheus"},"targets":[{"expr":"nginx_up","refId":"A"}]},
+    {"id":3,"title":"PostgreSQL availability","type":"stat","gridPos":{"x":16,"y":0,"w":8,"h":5},"datasource":{"type":"prometheus","uid":"prometheus"},"targets":[{"expr":"pg_up","refId":"A"}]},
+    {"id":4,"title":"Container CPU cores","type":"timeseries","gridPos":{"x":0,"y":5,"w":12,"h":8},"datasource":{"type":"prometheus","uid":"prometheus"},"targets":[{"expr":"sum by (name) (rate(container_cpu_usage_seconds_total{image!=\"\"}[2m]))","legendFormat":"{{name}}","refId":"A"}]},
+    {"id":5,"title":"Container working set bytes","type":"timeseries","gridPos":{"x":12,"y":5,"w":12,"h":8},"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"unit":"bytes"}},"targets":[{"expr":"container_memory_working_set_bytes{image!=\"\"}","legendFormat":"{{name}}","refId":"A"}]},
+    {"id":6,"title":"Web requests per second","type":"timeseries","gridPos":{"x":0,"y":13,"w":12,"h":8},"datasource":{"type":"prometheus","uid":"prometheus"},"targets":[{"expr":"sum by (status) (rate(web_requests_total[2m]))","legendFormat":"HTTP {{status}}","refId":"A"}]},
+    {"id":7,"title":"Database sessions","type":"timeseries","gridPos":{"x":12,"y":13,"w":12,"h":8},"datasource":{"type":"prometheus","uid":"prometheus"},"targets":[{"expr":"pg_stat_database_numbackends{datname=\"projects\"}","legendFormat":"{{datname}}","refId":"A"}]},
+    {"id":8,"title":"Nginx connections","type":"timeseries","gridPos":{"x":0,"y":21,"w":12,"h":8},"datasource":{"type":"prometheus","uid":"prometheus"},"targets":[{"expr":"nginx_connections_active","refId":"A"}]},
+    {"id":9,"title":"Database commits per second","type":"timeseries","gridPos":{"x":12,"y":21,"w":12,"h":8},"datasource":{"type":"prometheus","uid":"prometheus"},"targets":[{"expr":"rate(pg_stat_database_xact_commit{datname=\"projects\"}[2m])","refId":"A"}]}
+  ]
+}
