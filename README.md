@@ -17,10 +17,10 @@ powershell -ExecutionPolicy Bypass -File scripts/start-wsl.ps1
 Hoặc mở terminal quản trị Ubuntu:
 
 ```powershell
-wsl -d Ubuntu-24.04 -u root --cd /home/dtc245200873/project-management
+wsl -d Ubuntu-24.04 -u dtc245200873 --cd /home/dtc245200873/project-management
 ```
 
-Trong Ubuntu chạy `docker compose ps` để xem dịch vụ. User mặc định `dtc245200873` chưa được cấp quyền nhóm Docker; quản trị bằng phiên root ở trên. Script Windows giữ một phiên WSL nền trong lúc demo để Docker không bị tắt khi đóng hết terminal. Chưa cấu hình tự chạy cùng Windows.
+Trong Ubuntu chạy `docker compose ps` để xem dịch vụ. Theo yêu cầu người dùng, `dtc245200873` đã được cấp nhóm Docker và chạy Docker không cần sudo. Nhóm Docker có quyền tương đương root. Script Windows giữ một phiên WSL nền trong lúc demo để Docker không bị tắt khi đóng hết terminal; chỉ bước khởi động dịch vụ systemd dùng root. Chưa cấu hình tự chạy cùng Windows.
 
 Nếu cài trên Ubuntu mới, dùng `bash scripts/init.sh` để tạo `.env`, sau đó `sudo docker compose up -d --build` sau khi cài Docker theo [hướng dẫn](docs/WSL2.md). Không chạy đồng thời stack Ubuntu và stack Docker Desktop cũ trên cùng bộ cổng.
 

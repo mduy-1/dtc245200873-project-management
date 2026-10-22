@@ -16,12 +16,12 @@ if (Test-Path -LiteralPath $pidPath) {
   }
 }
 if (-not $existing) {
-  $keeper = Start-Process -FilePath 'wsl.exe' -ArgumentList @('-d',$Distribution,'-u','root','--exec','sleep','infinity') -WindowStyle Hidden -PassThru
+  $keeper = Start-Process -FilePath 'wsl.exe' -ArgumentList @('-d',$Distribution,'-u','dtc245200873','--exec','sleep','infinity') -WindowStyle Hidden -PassThru
   [IO.File]::WriteAllText($pidPath,[string]$keeper.Id)
 }
 wsl -d $Distribution -u root --exec systemctl start docker
 if ($LASTEXITCODE -ne 0) { throw 'Cannot start Docker in Ubuntu.' }
-wsl -d $Distribution -u root --cd $ProjectPath --exec docker compose up -d --no-build --pull never
+wsl -d $Distribution -u dtc245200873 --cd $ProjectPath --exec docker compose up -d --no-build --pull never
 if ($LASTEXITCODE -ne 0) { throw 'Cannot start the existing Ubuntu deployment.' }
-wsl -d $Distribution -u root --cd $ProjectPath --exec docker compose ps
+wsl -d $Distribution -u dtc245200873 --cd $ProjectPath --exec docker compose ps
 Write-Host 'Ubuntu deployment started. Website: http://localhost:8080'

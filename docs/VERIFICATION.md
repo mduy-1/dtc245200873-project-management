@@ -34,3 +34,7 @@ Tệp này phân biệt cấu hình đã chuẩn bị và kết quả đã chạ
 - Khi không giữ phiên WSL, distro tự dừng làm các container ngừng theo. Đã khắc phục bằng phiên nền `sleep infinity`; `scripts/start-wsl.ps1` giữ phiên này trong các lần khởi động sau. Không tạo scheduled task hay tự chạy cùng Windows.
 - Compose có cảnh báo volume đã tồn tại do phục hồi tạo volume trước; dữ liệu được mount và hoạt động, không xóa/recreate volume để loại bỏ cảnh báo.
 - Chưa có screenshot riêng của Ubuntu WSL2 hoặc báo cáo hoàn chỉnh. Các giới hạn xác thực app/dependency audit trước đó vẫn cần xử lý trước khi triển khai Internet.
+
+### Cấp quyền Docker theo yêu cầu người dùng
+
+Ngày 22/10/2026, sau khi người dùng cho phép, đã thêm `dtc245200873` vào nhóm docker. Phiên WSL mới xác nhận groups có docker (GID 989), chạy `docker info` và liệt kê đủ 11 service bằng `docker compose ps` thành công, không qua root hoặc sudo. Các ghi nhận chưa cấp nhóm ở thời điểm triển khai ban đầu bên trên là lịch sử trước thay đổi này. Script start-wsl.ps1 dùng user thường cho Compose và phiên giữ WSL; root chỉ khởi động service Docker qua systemd.

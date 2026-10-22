@@ -8,10 +8,10 @@ Ubuntu WSL2 là môi trường Linux riêng trên Windows. Docker Engine đượ
 - User Linux mặc định: `dtc245200873`.
 - Thư mục bài: `/home/dtc245200873/project-management`.
 - Docker Engine Community 29.9.2; Docker Compose plugin 5.6.1.
-- User thường chưa được cấp nhóm docker và chưa thiết lập mật khẩu sudo. Không cần gửi mật khẩu qua chat. Để quản trị stack từ Windows, mở đúng distro bằng root:
+- User `dtc245200873` đã được thêm vào nhóm docker theo yêu cầu người dùng ngày 22/10/2026 và kiểm tra chạy Docker thành công không cần sudo. Nhóm docker có quyền tương đương root; mật khẩu sudo chưa được thiết lập. Để quản trị stack từ Windows:
 
 ```powershell
-wsl -d Ubuntu-24.04 -u root --cd /home/dtc245200873/project-management
+wsl -d Ubuntu-24.04 -u dtc245200873 --cd /home/dtc245200873/project-management
 ```
 
 Trong terminal Ubuntu đó dùng `docker compose ps`, `docker compose up -d` hoặc `docker compose logs`. Docker daemon được enable bằng systemd, tự chạy khi distro khởi động; Ubuntu WSL không tự khởi động cùng Windows nếu chưa có tác vụ khởi động.
