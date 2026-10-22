@@ -4,6 +4,26 @@ Express + PostgreSQL + pgAdmin + Nginx. Giao diện tiếng Việt dạng bảng
 
 **Trạng thái:** đã chạy Docker Compose và kiểm tra tích hợp ngày 20/10/2026. Smoke test đạt, Prometheus có 5 target UP, pgAdmin HTTP 200, có metrics từng container và kết quả 3 truy vấn Loki. Xem [kết quả kiểm chứng](docs/VERIFICATION.md). Báo cáo và thông tin sinh viên để làm sau theo yêu cầu.
 
+**Cập nhật 22/10/2026:** đã chuyển bản triển khai chính sang **Ubuntu 24.04 WSL2 + Docker Engine cài trực tiếp trong Ubuntu**. Phục hồi đủ 6 volume, giữ nguyên 4 dự án / 3 thành viên / 6 task và mật khẩu. Web, pgAdmin, Grafana, Prometheus truy cập được từ Windows; 5 target UP và 3 query LogQL có dữ liệu. Xem [hướng dẫn WSL2](docs/WSL2.md).
+
+## Khởi chạy bản Ubuntu WSL2 đã cài
+
+Từ thư mục bài trên Windows:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/start-wsl.ps1
+```
+
+Hoặc mở terminal quản trị Ubuntu:
+
+```powershell
+wsl -d Ubuntu-24.04 -u root --cd /home/dtc245200873/project-management
+```
+
+Trong Ubuntu chạy `docker compose ps` để xem dịch vụ. User mặc định `dtc245200873` chưa được cấp quyền nhóm Docker; quản trị bằng phiên root ở trên. Script Windows giữ một phiên WSL nền trong lúc demo để Docker không bị tắt khi đóng hết terminal. Chưa cấu hình tự chạy cùng Windows.
+
+Nếu cài trên Ubuntu mới, dùng `bash scripts/init.sh` để tạo `.env`, sau đó `sudo docker compose up -d --build` sau khi cài Docker theo [hướng dẫn](docs/WSL2.md). Không chạy đồng thời stack Ubuntu và stack Docker Desktop cũ trên cùng bộ cổng.
+
 ## Khởi chạy trên Windows
 
 Yêu cầu Docker Desktop chạy Linux containers, Docker Compose v2, PowerShell và khoảng 6 GB RAM trống. Mở terminal tại thư mục repository:

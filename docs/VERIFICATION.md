@@ -18,3 +18,19 @@ Tệp này phân biệt cấu hình đã chuẩn bị và kết quả đã chạ
 - Build npm báo 4 dependency vulnerabilities (2 moderate, 2 high); cần audit và nâng dependency trước khi triển khai ngoài môi trường lab. API vẫn chưa có xác thực, chỉ bind localhost theo thiết kế.
 - Đã push lên repository công khai https://github.com/mduy-1/dtc245200873-project-management, branch main. Tên repository theo MSSV dtc245200873; tài khoản hiện có là mduy-1.
 - Chưa có screenshot demo và báo cáo sinh viên.
+
+## Chuyển sang Ubuntu WSL2 ngày 22/10/2026
+
+- Cài Ubuntu-24.04 từ file Ubuntu chính thức, kiểm tra SHA256 theo danh mục Microsoft WSL trước khi cài; `cat /etc/os-release` xác nhận Ubuntu 24.04.5 LTS, kernel `6.18.54.1-microsoft-standard-WSL2`.
+- Docker Engine Community 29.9.2 và Compose plugin 5.6.1 được cài bằng apt repository chính thức của Docker. `docker info` xác nhận OperatingSystem Ubuntu 24.04.5 LTS, DockerRootDir `/var/lib/docker`.
+- Mã nguồn nằm tại `/home/dtc245200873/project-management`; `.env` permission 600, thuộc user dtc245200873. Không cấp user vào nhóm docker; quản trị qua `wsl -u root`.
+- Stack Docker Desktop cũ đã dừng. Sao lưu và phục hồi 6 volume: PostgreSQL, pgAdmin, Grafana, Prometheus, Loki và logs. Các image được chuyển cục bộ từ Docker Desktop sang Docker Ubuntu rồi chạy bằng Compose.
+- PostgreSQL sau phục hồi: 4 projects, 3 members, 6 tasks. `/health` trả status ok, database connected.
+- 11 service dài hạn chạy trong Ubuntu; app và DB healthy. log-init là tác vụ một lần và Exited (0) đúng thiết kế.
+- Windows kiểm tra website `/health`, pgAdmin `/login`, Grafana `/api/health`, Prometheus `/-/ready`: tất cả HTTP 200.
+- Prometheus: 5 target UP, không lastError. Grafana đăng nhập API bằng mật khẩu cũ thành công, dashboard UID project-lab có 9 panel.
+- `scripts/verify-runtime.js`: 11 series bộ nhớ container có image; ba query LogQL cho app, nginx và count_over_time đều có kết quả.
+- App UID 1000 và Nginx UID 101 được kiểm tra trong container Ubuntu.
+- Khi không giữ phiên WSL, distro tự dừng làm các container ngừng theo. Đã khắc phục bằng phiên nền `sleep infinity`; `scripts/start-wsl.ps1` giữ phiên này trong các lần khởi động sau. Không tạo scheduled task hay tự chạy cùng Windows.
+- Compose có cảnh báo volume đã tồn tại do phục hồi tạo volume trước; dữ liệu được mount và hoạt động, không xóa/recreate volume để loại bỏ cảnh báo.
+- Chưa có screenshot riêng của Ubuntu WSL2 hoặc báo cáo hoàn chỉnh. Các giới hạn xác thực app/dependency audit trước đó vẫn cần xử lý trước khi triển khai Internet.
